@@ -254,6 +254,10 @@ func getTaskHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			tasks = append(tasks, task)
 		}
+		if err := rows.Err(); err != nil {
+			http.Error(w, `{"error":"Ошибка при чтении строк из результата"}`, http.StatusInternalServerError)
+			return
+		}
 	}
 	response := map[string]interface{}{
 		"tasks": tasks,
