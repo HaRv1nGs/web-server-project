@@ -1,10 +1,6 @@
 package main
 
 import (
-	//"fmt"
-	//"os"
-	//"path/filepath"
-
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -124,7 +120,7 @@ func nextDateHandler(w http.ResponseWriter, r *http.Request) {
 	nowParam := r.URL.Query().Get("now")
 	repeatParam := r.URL.Query().Get("repeat")
 	dateParam := r.URL.Query().Get("date")
-	now, err := time.Parse("20060102", nowParam)
+	now, err := time.Parse(dateConst, nowParam)
 	if err != nil {
 		http.Error(w, "invalid 'now' date format", http.StatusBadRequest)
 		return
@@ -134,7 +130,11 @@ func nextDateHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(nextDate))
+	if _, err := w.Write([]byte(nextDate)); err != nil {
+
+		http.Error(w, "failed to write response", http.StatusInternalServerError)
+		return
+	}
 }
 
 // добавление новой задачи
